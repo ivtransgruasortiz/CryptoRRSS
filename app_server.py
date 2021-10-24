@@ -14,9 +14,9 @@ import logging
 import yaml
 
 ### MODIFICAR CUANDO TOQUE
-# print('Poner en el navegador "http://localhost:5000/api/v1/premios/bbdd/<numero1-numero2-...etc> or http://localhost:5000/api/v1/premios/csv/<numero1-numero2-...etc>" donde los numeros van separados por guiones')
-# print('Poner en el navegador "http://Iv36.pythonanywhere.com/api/v1/premios/csv/<numero1-numero2-...etc> or http://Iv36.pythonanywhere.com/api/v1/premios/bbdd/<numero1-numero2-...etc> " donde los numeros van separados por guiones')
-# print('Tambien desde una consola python "request.get("http://localhost:5000/api/v1/premios/<numero1-numero2-...etc>")", donde los numeros van separados por guiones')
+# print('Poner en el navegador "http://localhost:5000/api/v1/cryptorrss/sentiment/<interval_time>
+# print('Poner en el navegador "http://Iv36.pythonanywhere.com/api/v1/cryptorrss/sentiment/<interval_time>
+# print('Tambien desde una consola python "request.get("http://localhost:5000/api/v1/cryptorrss/sentiment/<interval_time>")"
 # print('Pulsar ctrl+c para cancelar')
 
 

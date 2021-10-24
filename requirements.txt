@@ -12,3 +12,4 @@ pandas
 bs4
 flask
 PyYAML>=5.4
+tweepy
