@@ -9,8 +9,11 @@ dnspython==2.0.0
 flask==1.1.2
 numpy
 pandas
+xlrd==1.2.0
 bs4
 flask
 PyYAML>=5.4
 tweepy
 textblob
+googletrans==3.1.0a0
+translate

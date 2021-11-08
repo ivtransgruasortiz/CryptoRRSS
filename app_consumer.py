@@ -55,13 +55,20 @@ else:
     system = sys.platform
 
 
-def peticion_api(time_period=None):
-    url = 'http://iv36.pythonanywhere.com/api/v1/cryptorrss/sentiment/'
-    if time_period is None:
-        time_period = input('Dame el timeperiod en dias: ')
-        respuesta = rq.get(url+f'{time_period}').json()
+def peticion_api(userid_list=None, count_twits=None):
+    # url = 'http://192.168.1.43:5000/api/v1/cryptorrss/sentiment?userid_list=CriptoNoticias-coingecko-CoinDesk&count_twits=4'
+    url = 'http://192.168.1.43:5000/api/v1/cryptorrss/sentiment?'
+    if userid_list is None:
+        userid_list = input('Dame la lista de cuentas de twitter separadas con guiones medios: ')
+        url_tot = url + 'userid_list=' + f'{userid_list}'
     else:
-        respuesta = rq.get(url+f'{time_period}').json()
+        url_tot = url + 'userid_list=' + f'{userid_list}'
+    if count_twits is None:
+        count_twits = input('Dime el numero de twitts a recopilar de cada cuenta: ')
+        url_tot = url_tot + '&' + 'count_twits=' + f'{count_twits}'
+    else:
+        url_tot = url_tot + '&' + 'count_twits=' + f'{count_twits}'
+    respuesta = rq.get(url_tot).json()
     print(respuesta)
     return respuesta
 

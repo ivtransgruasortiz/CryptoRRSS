@@ -6,12 +6,14 @@ Created on Sun Oct 03 21:05:00 2021
 """
 import sys
 import os
+import requests
 import pandas as pd
 import json
 import glob
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import logging
 import yaml
+from app_twitterconnect import json_sentiment
 
 ### MODIFICAR CUANDO TOQUE
 # print('Poner en el navegador "http://localhost:5000/api/v1/cryptorrss/sentiment/<interval_time>
@@ -62,27 +64,22 @@ else:
 
 
 
-
 ##### INICIO #####
 ## Creacion de la app
 app = Flask(__name__) 
 
-@app.route('/api/v1/cryptorrss/sentiment/<interval_time>', methods=['GET'])
-def api_cryptosentiment(interval_time):
-    # varias_operaciones
-    # conexion_twitter
-    # bajar_mensajes
-    # conexion_otras_apps
-    # bajar_mensajes
-    # unir_todos_mensajes_segun_interval_time
-    # aplicar_modelo_pickle_sentiment a los mensajes concatenados o por separado
-    # lista_numeros = str_numeros.split('-')
-    # dicc = {item:{'premio':suma_premios, 'causa':causa}}
-    # lista_results.append(dicc)
-    predict = {'prob_positive': 0.6,
-               'prob_negative': 0.2,
-               'prob_neutral': 0.2}
+@app.route('/api/v1/cryptorrss/sentiment/', methods=['GET'])
+def api_cryptosentiment():
+    userid_list = request.args.get('userid_list', None)
+    count_twits = request.args.get('count_twits', None)
+    userid_list = userid_list.split('-')
+    predict = json_sentiment(userid_list=userid_list, count_twits=count_twits)
     return jsonify(predict)
+
+# @app.route('/api/v1/cryptorrss/sentiment/<count_twits>', methods=['GET'])
+# def api_cryptosentiment(count_twits):
+#     predict = json_sentiment(count_twits=count_twits)
+#     return jsonify(predict)
 
 
 ###############################################################################################################
