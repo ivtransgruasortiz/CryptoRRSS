@@ -19,6 +19,7 @@ from textblob import TextBlob
 import re
 # Importing the NaiveBayesAnalyzer classifier from NLTK
 from textblob.sentiments import NaiveBayesAnalyzer
+from googletrans import Translator
 
 with open("config.yaml", "r") as stream:
     auth_tweeter = yaml.safe_load(stream)
@@ -53,9 +54,12 @@ def sent_analisys(x):
 def filtertext(x, excel_file):
     path = os.getcwd()
     df_palabras = pd.read_excel(path + '/' + excel_file)
+    df_palabras = df_palabras.fillna(0)
     lista_words = list(df_palabras['PALABRAS'].values) + \
                   list(df_palabras['hastag'].values) + \
                   list(df_palabras['arroba'].values)
+    # lista_words = list(filter((0).__ne__, lista_words))
+    lista_words = [x for x in lista_words if x != 0]
     result = []
     for word in lista_words:
         tag = bool(re.search(word, x.lower()))
@@ -63,13 +67,20 @@ def filtertext(x, excel_file):
     return max(result)
 
 
+def translate_en(x, dest='en'):
+    translator = Translator()
+    result = translator.translate(x, dest='en').text
+    return result
+
+
 userid_list = ('CriptoNoticias', 'bit2me', 'MundoCrypto_ES', 'Tesla',
                'cryptocom', 'elonmusk', 'nayibbukele', 'Cointelegraph', 'crypto', 'CoinMarketCap',
                'ForbesCrypto', 'CryptoBoomNews', 'BTCTN', 'solana', 'CoinbasePro', 'coingecko', 'CoinDesk',
-               'blockchain'
+               'blockchain', 'healthy_pockets', 'wallstwolverine'
                )
 
-userid_list = ('CriptoNoticias', 'coingecko', 'CoinDesk', 'blockchain'
+userid_list = ('CriptoNoticias', 'coingecko', 'CoinDesk', 'blockchain', 'MundoCrypto_ES', 'bit2me', 'healthy_pockets',
+               'wallstwolverine'
                )
 
 
@@ -88,7 +99,11 @@ def json_sentiment(userid_list=userid_list, count_twits=3):
         twits_df_1 = pd.DataFrame(tweets_1)
         twits_df = pd.concat([twits_df, twits_df_1])
     twits_df['has_keys'] = np.vectorize(filtertext)(twits_df['full_text'], 'Palabras_Crypto.xlsx')
-    twits_df = twits_df[((twits_df['has_keys'] == True) & (twits_df['lang'] == 'en'))]
+    twits_df = twits_df[twits_df['has_keys'] == True]
+    twits_df_en = twits_df[twits_df['lang'] == 'en'].reset_index()
+    twits_df_others = twits_df[twits_df['lang'] != 'en'].reset_index()
+    twits_df_others['full_text'] = np.vectorize(translate_en)(twits_df_others['full_text'])
+    twits_df = pd.concat([twits_df_en, twits_df_others])
     twits_df['username'] = np.vectorize(get_name)(twits_df['user'])
     twits_df = twits_df.reset_index()
     twits_df['result'] = np.vectorize(sent_analisys)(twits_df['full_text'])
@@ -109,24 +124,24 @@ def json_sentiment(userid_list=userid_list, count_twits=3):
 
 # a = json_sentiment(count_twits=2)
 
-
-##### traductor
-text = 'This site is awesome'
-from googletrans import Translator
-translator = Translator()
-translator.translate(text, dest='en').text
-
-
-from textblob import TextBlob
-blob = TextBlob('comment ca va ?')
-blob.translate(to='en')
-
-
-from translate import Translator
-translator = Translator(to_lang="zh")
-translation = translator.translate("This is a pen.")
-
-##############################################33
+#
+# ##### Traductor
+# text = 'Hola'
+# from googletrans import Translator
+# translator = Translator()
+# translator.translate(text, dest='en').text
+# translator.translate(text).text
+#
+# from textblob import TextBlob
+# blob = TextBlob('comment ca va ?')
+# blob.translate(to='en')
+#
+#
+# from translate import Translator
+# translator = Translator(to_lang="zh")
+# translation = translator.translate("This is a pen.")
+#
+# ##############################################
 
 
 
