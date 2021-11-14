@@ -1,0 +1,4 @@
+# PARAMETERS
+crypto_trading_db: 'crypto_trading_db'
+whatsapp_twilio_db: 'whatsapp_twilio_db'
+mail_db: 'mail_db'
