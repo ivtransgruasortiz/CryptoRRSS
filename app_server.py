@@ -6,20 +6,22 @@ Created on Sun Oct 03 21:05:00 2021
 """
 import sys
 import os
-import requests
 import pandas as pd
-import json
-import glob
-from flask import Flask, jsonify, request
-import logging
 import yaml
+import tweepy
+import ssl
+import pymongo
+import flask
+import logging
 from app_twitterconnect import json_sentiment
 
+
 ### MODIFICAR CUANDO TOQUE
-# print('Poner en el navegador "http://localhost:5000/api/v1/cryptorrss/sentiment/<interval_time>
-# print('Poner en el navegador "http://Iv36.pythonanywhere.com/api/v1/cryptorrss/sentiment/<interval_time>
-# print('Tambien desde una consola python "request.get("http://localhost:5000/api/v1/cryptorrss/sentiment/<interval_time>")"
-# print('Pulsar ctrl+c para cancelar')
+print('### Examples ###')
+print('Poner en el navegador "http://192.168.1.43:5000/api/v1/cryptorrss/sentiment?userid_list=<CriptoNoticias-coingecko-CoinDesk>&count_twits=<4>"')
+print('Poner en el navegador "http://Iv36.pythonanywhere.com/api/v1/cryptorrss/sentiment?userid_list=<CriptoNoticias-coingecko-CoinDesk>&count_twits=<4>"')
+print('Tambien desde una consola python "request.get("http://localhost:5000/api/v1/cryptorrss/sentiment?userid_list=<CriptoNoticias-coingecko-CoinDesk>&count_twits=<4>")"')
+print('Press ctrl+c to cancel')
 
 
 ## Logging
@@ -28,18 +30,10 @@ logging.basicConfig(format='%(asctime)s %(name)s-%(levelname)s:: %(message)s', d
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 cryptoRRSS_log = logging.getLogger("CryptoRRSS_Logging")
-sys.stdout.flush() #Para cambiar el comportamiento de los print -- sin esta línea los escribe del tirón...
+sys.stdout.flush()
 print('#####################################')
 cryptoRRSS_log.info(sys.platform + ' System')
-print('#####################################')
-cryptoRRSS_log.info('### Importing Libraries... ###')
-## Importar Parametros
-with open('parameters.yaml', 'r') as parameters_file:
-    param = yaml.safe_load(parameters_file)
-    parameters_file.close()
-crypto_trading_db = param['crypto_trading_db']
-whatsapp_twilio_db = param['whatsapp_twilio_db']
-mail_db = param['mail_db']
+
 ### SYSTEM DATA ###
 if '__file__' in locals():
     if locals()['__file__'] == '<input>':
@@ -63,23 +57,48 @@ else:
     system = sys.platform
 
 
+if '__file__' in locals():
+    client_r = pymongo.MongoClient(
+        "mongodb+srv://%s:%s@cluster0.vsp3s.mongodb.net/" % (sys.argv[1], sys.argv[2]), ssl_cert_reqs=ssl.CERT_NONE)
+    twitter_db = 'twitter_db'
+    db_twitter = client_r.get_database(twitter_db)
+    twitter_records = db_twitter.credentials_data_records
+    twitter_data = list(twitter_records.find({}, {"_id": 0}))
+    auth_tweeter = twitter_data[0]
+    print('__file__' in locals())
+    print('Vamos por el buen camino...')
+else:
+    with open("config.yaml", "r") as stream:
+        auth_tweeter = yaml.safe_load(stream)
+        stream.close()
+
+
+# Pandas options
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_colwidth', None)
+
+# User and password for twitter account
+api_key = auth_tweeter['api_key']
+api_key_secret = auth_tweeter['api_key_secret']
+acces_token = auth_tweeter['acces_token']
+acces_token_secret = auth_tweeter['acces_token_secret']
+auth = tweepy.OAuthHandler(api_key, api_key_secret)
+auth.set_access_token(acces_token, acces_token_secret)
+api = tweepy.API(auth)
+
+
 
 ##### INICIO #####
 ## Creacion de la app
-app = Flask(__name__) 
+app = flask.Flask(__name__)
 
 @app.route('/api/v1/cryptorrss/sentiment/', methods=['GET'])
 def api_cryptosentiment():
-    userid_list = request.args.get('userid_list', None)
-    count_twits = request.args.get('count_twits', None)
+    userid_list = flask.request.args.get('userid_list', None)
+    count_twits = flask.request.args.get('count_twits', None)
     userid_list = userid_list.split('-')
-    predict = json_sentiment(userid_list=userid_list, count_twits=count_twits)
-    return jsonify(predict)
-
-# @app.route('/api/v1/cryptorrss/sentiment/<count_twits>', methods=['GET'])
-# def api_cryptosentiment(count_twits):
-#     predict = json_sentiment(count_twits=count_twits)
-#     return jsonify(predict)
+    predict = json_sentiment(api, userid_list=userid_list, count_twits=count_twits)
+    return flask.jsonify(predict)
 
 
 ###############################################################################################################

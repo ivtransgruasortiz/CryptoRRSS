@@ -6,7 +6,8 @@ pytest-cov
 requests==2.25.1
 pymongo==3.11.2
 dnspython==2.0.0
-flask==1.1.2
+#flask==1.1.2
+flask==2.0.2
 numpy
 pandas
 xlrd==1.2.0
@@ -17,3 +18,4 @@ tweepy
 textblob
 googletrans==3.1.0a0
 translate
+openpyxl
