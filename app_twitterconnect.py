@@ -8,10 +8,11 @@ import sys
 import os
 import pandas as pd
 import numpy as np
-from textblob import TextBlob
 import re
 from textblob.sentiments import NaiveBayesAnalyzer
 from googletrans import Translator
+from textblob import TextBlob
+from translate import Translator as transtrans
 import unicodedata
 
 
@@ -32,6 +33,41 @@ else:
     wd = os.path.abspath("./Documents/Repositorio_Iv/CryptoRRSS")
     wd += '/'
     sys.path.append(wd)
+
+# #### TESTING
+# import yaml
+# import tweepy
+# import ssl
+# import pymongo
+# if '__file__' in locals():
+#     client_r = pymongo.MongoClient(
+#         "mongodb+srv://%s:%s@cluster0.vsp3s.mongodb.net/" % (sys.argv[1], sys.argv[2]), ssl_cert_reqs=ssl.CERT_NONE)
+#     twitter_db = 'twitter_db'
+#     db_twitter = client_r.get_database(twitter_db)
+#     twitter_records = db_twitter.credentials_data_records
+#     twitter_data = list(twitter_records.find({}, {"_id": 0}))
+#     auth_tweeter = twitter_data[0]
+#     print('__file__' in locals())
+#     print('Vamos por el buen camino...')
+# else:
+#     with open("config.yaml", "r") as stream:
+#         auth_tweeter = yaml.safe_load(stream)
+#         stream.close()
+#
+# # Pandas options
+# pd.set_option('display.max_columns', None)
+# pd.set_option('display.max_colwidth', None)
+# # User and password for twitter account
+# api_key = auth_tweeter['api_key']
+# api_key_secret = auth_tweeter['api_key_secret']
+# acces_token = auth_tweeter['acces_token']
+# acces_token_secret = auth_tweeter['acces_token_secret']
+# auth = tweepy.OAuthHandler(api_key, api_key_secret)
+# auth.set_access_token(acces_token, acces_token_secret)
+# api = tweepy.API(auth)
+# ##### FIN TESTING #####
+
+
 
 
 def get_name(x):
@@ -59,13 +95,25 @@ def filtertext(x, excel_file):
         tag = bool(re.search(word, x.lower()))
         result.append(tag)
     return max(result)
-
+import time
 
 def translate_en(x, lang='en'):
+    ### Google
     translator = Translator()
     result = translator.translate(x, dest=lang).text
-    return result
+    # ### textblob
+    # translator = TextBlob(x)
+    # result = translator.translate(to=lang)
+    # ### translate
+    # translator = transtrans(to_lang=lang)
+    # result = translator.translate(x)
+    return str(result)
 
+x = 'hola'
+lang = 'en'
+a = translate_en(x, lang=lang)
+type(x)
+count_twits=3
 
 def cleantext(x):
     result = unicodedata.normalize('NFD', x).encode("utf8").decode("ascii", "ignore")
@@ -86,7 +134,7 @@ userid_list = ('CriptoNoticias', 'coingecko', 'CoinDesk', 'blockchain', 'MundoCr
                )
 
 
-def json_sentiment(api, userid_list=userid_list, count_twits=3):
+def json_sentiment(api, userid_list=userid_list, count_twits=3, lang='en'):
     twits_df = pd.DataFrame()
     for userid in userid_list:
         tweets = api.user_timeline(screen_name=userid,
@@ -105,7 +153,7 @@ def json_sentiment(api, userid_list=userid_list, count_twits=3):
     twits_df = twits_df[twits_df['has_keys'] == True]
     twits_df_en = twits_df[twits_df['lang'] == 'en'].reset_index()
     twits_df_others = twits_df[twits_df['lang'] != 'en'].reset_index()
-    twits_df_others['full_text'] = np.vectorize(translate_en)(twits_df_others['full_text'])
+    twits_df_others['full_text'] = np.vectorize(translate_en)(twits_df_others['full_text'], lang=lang)
     twits_df = pd.concat([twits_df_en, twits_df_others])
     twits_df['username'] = np.vectorize(get_name)(twits_df['user'])
     twits_df = twits_df.reset_index()

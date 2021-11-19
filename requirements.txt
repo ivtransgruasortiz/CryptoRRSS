@@ -16,6 +16,6 @@ flask
 PyYAML>=5.4
 tweepy
 textblob
-googletrans==3.1.0a0
+googletrans==4.0.0rc1
 translate
 openpyxl

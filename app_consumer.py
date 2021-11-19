@@ -21,7 +21,7 @@ sys.stdout.flush()
 cryptoRRSS_log.info(sys.platform + ' System')
 
 
-def peticion_api(userid_list=None, count_twits=None):
+def peticion_api(userid_list=None, count_twits=None, lang=None):
     # url = 'http://192.168.1.43:5000/api/v1/cryptorrss/sentiment?userid_list=CriptoNoticias-coingecko-CoinDesk&count_twits=4'
     url = 'http://192.168.1.43:5000/api/v1/cryptorrss/sentiment?'
     if userid_list is None:
@@ -34,6 +34,11 @@ def peticion_api(userid_list=None, count_twits=None):
         url_tot = url_tot + '&' + 'count_twits=' + f'{count_twits}'
     else:
         url_tot = url_tot + '&' + 'count_twits=' + f'{count_twits}'
+    if lang is None:
+        lang = input('Dime el idioma al que traducir todos los text ("en" por defecto): ')
+        url_tot = url_tot + '&' + 'count_twits=' + f'{count_twits}' + '&' + 'lang=' + f'{lang}'
+    else:
+        url_tot = url_tot + '&' + 'count_twits=' + f'{count_twits}' + '&' + 'lang=' + f'{lang}'
     respuesta = rq.get(url_tot).json()
     print(respuesta)
     return respuesta

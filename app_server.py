@@ -96,8 +96,9 @@ app = flask.Flask(__name__)
 def api_cryptosentiment():
     userid_list = flask.request.args.get('userid_list', None)
     count_twits = flask.request.args.get('count_twits', None)
+    lang = flask.request.args.get('lang', None)
     userid_list = userid_list.split('-')
-    predict = json_sentiment(api, userid_list=userid_list, count_twits=count_twits)
+    predict = json_sentiment(api, userid_list=userid_list, count_twits=count_twits, lang=lang)
     return flask.jsonify(predict)
 
 
