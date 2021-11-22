@@ -78,7 +78,7 @@ def get_name(x):
 def sent_analisys(x):
     blob_object = TextBlob(x, analyzer=NaiveBayesAnalyzer())
     analysis = blob_object.sentiment
-    analysis = '$'.join([str(x) for x in analysis])
+    analysis = '$'.join([str(y) for y in analysis])
     return analysis
 
 
@@ -113,7 +113,7 @@ x = 'hola'
 lang = 'en'
 a = translate_en(x, lang=lang)
 type(x)
-count_twits=3
+count_twits = 3
 
 def cleantext(x):
     result = unicodedata.normalize('NFD', x).encode("utf8").decode("ascii", "ignore")
