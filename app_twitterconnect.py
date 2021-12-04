@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6
+#!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 """
 Created on Sun Oct 03 21:05:00 2021
@@ -68,8 +68,6 @@ else:
 # ##### FIN TESTING #####
 
 
-
-
 def get_name(x):
     result = x['screen_name']
     return result
@@ -95,7 +93,7 @@ def filtertext(x, excel_file):
         tag = bool(re.search(word, x.lower()))
         result.append(tag)
     return max(result)
-import time
+
 
 def translate_en(x, lang='en'):
     ### Google
@@ -109,11 +107,12 @@ def translate_en(x, lang='en'):
     # result = translator.translate(x)
     return str(result)
 
-x = 'hola'
-lang = 'en'
-a = translate_en(x, lang=lang)
-type(x)
-count_twits = 3
+# #PRUEBAS
+# x = 'hola'
+# lang = 'en'
+# a = translate_en(x, lang=lang)
+# type(x)
+# count_twits = 3
 
 def cleantext(x):
     result = unicodedata.normalize('NFD', x).encode("utf8").decode("ascii", "ignore")
@@ -134,7 +133,9 @@ userid_list = ('CriptoNoticias', 'coingecko', 'CoinDesk', 'blockchain', 'MundoCr
                )
 
 
-def json_sentiment(api, userid_list=userid_list, count_twits=3, lang='en'):
+def json_sentiment(api, userid_list=userid_list, count_twits=3, lang=None):
+    if lang is None:
+        lang = 'en'
     twits_df = pd.DataFrame()
     for userid in userid_list:
         tweets = api.user_timeline(screen_name=userid,

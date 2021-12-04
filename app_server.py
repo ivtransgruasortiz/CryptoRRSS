@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6
+#!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 """
 Created on Sun Oct 03 21:05:00 2021

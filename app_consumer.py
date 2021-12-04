@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6
+#!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 """
 Created on Sun Oct 03 21:05:00 2021
@@ -36,13 +36,13 @@ def peticion_api(userid_list=None, count_twits=None, lang=None):
         url_tot = url_tot + '&' + 'count_twits=' + f'{count_twits}'
     if lang is None:
         lang = input('Dime el idioma al que traducir todos los text ("en" por defecto): ')
-        url_tot = url_tot + '&' + 'count_twits=' + f'{count_twits}' + '&' + 'lang=' + f'{lang}'
+        url_tot = url_tot + '&' + 'count_twits=' + f'{count_twits}'
     else:
         url_tot = url_tot + '&' + 'count_twits=' + f'{count_twits}' + '&' + 'lang=' + f'{lang}'
-    respuesta = rq.get(url_tot).json()
-    print(respuesta)
-    return respuesta
+    # respuesta = rq.get(url_tot).json()
+    # print(respuesta)
+    return url_tot
 
 
 if __name__ == '__main__':
-    peticion_api()
+    a = peticion_api()
