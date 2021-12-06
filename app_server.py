@@ -58,8 +58,10 @@ else:
 
 
 if '__file__' in locals():
+    SECRET_USER = os.getenv("SECRET_KEY")
+    SECRET_PASS = os.getenv("SECRET_PASS")
     client_r = pymongo.MongoClient(
-        "mongodb+srv://%s:%s@cluster0.vsp3s.mongodb.net/" % (sys.argv[1], sys.argv[2]), ssl_cert_reqs=ssl.CERT_NONE)
+        "mongodb+srv://%s:%s@cluster0.vsp3s.mongodb.net/" % (SECRET_USER, SECRET_PASS), ssl_cert_reqs=ssl.CERT_NONE)
     twitter_db = 'twitter_db'
     db_twitter = client_r.get_database(twitter_db)
     twitter_records = db_twitter.credentials_data_records
