@@ -18,3 +18,4 @@ textblob
 googletrans==4.0.0rc1
 translate
 openpyxl
+python-dotenv>=0.8
