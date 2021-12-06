@@ -58,7 +58,7 @@ else:
 
 
 if '__file__' in locals():
-    SECRET_USER = os.getenv("SECRET_KEY")
+    SECRET_USER = os.getenv("SECRET_USER")
     SECRET_PASS = os.getenv("SECRET_PASS")
     client_r = pymongo.MongoClient(
         "mongodb+srv://%s:%s@cluster0.vsp3s.mongodb.net/" % (SECRET_USER, SECRET_PASS), ssl_cert_reqs=ssl.CERT_NONE)
